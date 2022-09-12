@@ -140,7 +140,6 @@ def _combine_forecast_and_election_results(chamber: str, use_today: bool = True,
     combined['seat'] = combined.state + combined.special.apply(lambda x: '-Special' if x else '')
     combined.forecastdate = combined.forecastdate.apply(lambda x: x.strftime('%m/%d/%Y'))
     combined['marginMiss'] = (combined.marginActl - combined.marginFcst).round(2)
-    combined['marginMissDir'] = combined.marginMiss.apply(lambda x: "D" if x >= 0 else "R")
 
     combined = combined.merge(fcst22, on='seat')
     combined['marginAdj22'] = combined.marginMiss + combined.marginFcst22
@@ -149,8 +148,7 @@ def _combine_forecast_and_election_results(chamber: str, use_today: bool = True,
         'forecastdate', 'seat',
         'voteshareDFcst', 'voteshareRFcst', 'candidateDFcst', 'candidateRFcst', 'marginFcst',
         'voteshareDActl', 'voteshareRActl', 'candidateDActl', 'candidateRActl', 'marginActl',
-        'marginMiss', 'marginMissDir',
-        'marginFcst22', 'marginAdj22',
+        'marginMiss', 'marginFcst22', 'marginAdj22',
     ]]
 
 
