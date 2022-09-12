@@ -162,10 +162,10 @@ def _combine_forecast_and_election_results(chamber: str, use_today: bool = True,
 
 def main() -> None:
     params = {
-        'GOVERNORS - 1 model launch': dict(chamber='governor', use_today=False, fcst_date=(2022, 10, 11)),
-        'GOVERNORS - 2 closest to election': dict(chamber='governor', use_today=False),
-        'SENATE - 1 this day in 2018': dict(chamber='senate'),
-        'SENATE - 2 closest to election': dict(chamber='senate', use_today=False),
+        'GOVERNORS - (1) model launch': dict(chamber='governor', use_today=False, fcst_date=(2022, 10, 11)),
+        'GOVERNORS - (2) closest to election': dict(chamber='governor', use_today=False),
+        'SENATE - (1) this day in 2018': dict(chamber='senate'),
+        'SENATE - (2) closest to election': dict(chamber='senate', use_today=False),
     }
     for label, i in params.items():
         _combine_forecast_and_election_results(**i).to_csv(f'outputs/{label}.csv', index=False)
