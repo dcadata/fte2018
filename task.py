@@ -22,7 +22,7 @@ def _add_margin(data: pd.DataFrame, merge_cols: list) -> pd.DataFrame:
     return data
 
 
-def _read_and_normalize_forecast(chamber: str) -> pd.DataFrame:
+def _read_and_normalize_2018_forecast(chamber: str) -> pd.DataFrame:
     """
     538's 2018 forecasts:
     Data links at bottom of page - search for "Download state data"
@@ -47,8 +47,8 @@ def _read_and_normalize_forecast(chamber: str) -> pd.DataFrame:
     return fcst
 
 
-def _get_forecast(*args) -> pd.DataFrame:
-    fcst = _read_and_normalize_forecast(*args)
+def _get_2018_forecast(*args) -> pd.DataFrame:
+    fcst = _read_and_normalize_2018_forecast(*args)
     fcst = _add_margin(fcst, ['forecastdate', 'state', 'special'])
     return fcst
 
@@ -110,7 +110,7 @@ def _get_election_results(*args) -> pd.DataFrame:
 
 
 def _combine_forecast_and_election_results(chamber: str, use_today: bool = True, fcst_date: tuple = (2018, 11, 6)):
-    fcst = _get_forecast(chamber)
+    fcst = _get_2018_forecast(chamber)
     cutoff_date = datetime.datetime.today().date() if use_today else datetime.date(*fcst_date)
     fcst = fcst[fcst.forecastdate == cutoff_date.replace(year=2018)].copy()
 
