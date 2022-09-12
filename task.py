@@ -7,8 +7,10 @@ import pandas as pd
 def _get_candidate_last_name(x: str) -> str:
     if pd.isna(x):
         return 'NA'
-    x = x.split(' AND ')[0].split('/')[0]
-    x = x.lower().strip()
+    x = x.lower()
+    for i in (' and ', '/', ',', 'jr', 'iii'):
+        x = x.split(i, 1)[0]
+    x = x.strip()
     names = x.rsplit(None, 1)
     try:
         return names[1]
@@ -44,7 +46,7 @@ def _read_and_normalize_2018_forecast(chamber: str) -> pd.DataFrame:
     fcst = fcst[fcst.model == 'classic'].drop(columns='model')  # 2018 forecasts defaulted to classic
     fcst.special = fcst.special.fillna(False)
     fcst.forecastdate = fcst.forecastdate.apply(lambda x: pd.to_datetime(x).date())
-    # fcst['candidateLastName'] = fcst.candidate.apply(_get_candidate_last_name)
+    fcst['candidateLastName'] = fcst.candidate.apply(_get_candidate_last_name)
     return fcst
 
 
@@ -88,7 +90,7 @@ def _read_senate_election_results() -> pd.DataFrame:
 
 def _add_voteshare_to_election_results_and_normalize_columns(elex: pd.DataFrame) -> pd.DataFrame:
     elex.party_simplified = elex.party_simplified.apply(lambda x: x[0])
-    # elex['candidateLastName'] = elex.candidate.apply(_get_candidate_last_name)
+    elex['candidateLastName'] = elex.candidate.apply(_get_candidate_last_name)
     elex['voteshare'] = (elex.candidatevotes / elex.totalvotes).apply(lambda x: x * 100).round(2)
     elex = elex.drop(columns=['candidatevotes', 'totalvotes']).rename(columns=dict(
         state_po='state', party_simplified='party'))
@@ -135,7 +137,8 @@ def _combine_forecast_and_election_results(chamber: str, use_today: bool = True,
 
     elex = _get_election_results(chamber)
 
-    combined = fcst.merge(elex, on=['state', 'special'], suffixes=('Fcst', 'Actl'))
+    combined = fcst.merge(elex, on=['state', 'special', 'candidateLastNameD', 'candidateLastNameR'], suffixes=(
+        'Fcst', 'Actl'))
 
     combined['seat'] = combined.state + combined.special.apply(lambda x: '-Special' if x else '')
     combined.forecastdate = combined.forecastdate.apply(lambda x: x.strftime('%m/%d/%Y'))
