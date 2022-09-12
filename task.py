@@ -1,4 +1,5 @@
 import datetime
+import time
 
 import pandas as pd
 
@@ -162,6 +163,7 @@ def main() -> None:
     }
     for label, i in params.items():
         _combine_forecast_and_election_results(**i).to_csv(f'outputs/{label}.csv', index=False)
+        time.sleep(1)
 
 
 if __name__ == '__main__':
