@@ -35,8 +35,8 @@ def _read_and_normalize_2018_forecast(chamber: str) -> pd.DataFrame:
       Data: https://projects.fivethirtyeight.com/congress-model-2018/senate_seat_forecast.csv
     """
     data_filepath = dict(
-        governor='governor_state_forecast.csv',
-        senate='senate_seat_forecast.csv',
+        governor='2018_governor_state_forecast.csv',
+        senate='2018_senate_seat_forecast.csv',
     )[chamber]
     fcst = pd.read_csv('data/' + data_filepath, usecols=[
         'forecastdate', 'state', 'special', 'party', 'candidate', 'voteshare', 'model'])
