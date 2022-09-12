@@ -130,6 +130,8 @@ def _combine_forecast_and_election_results(chamber: str, use_today: bool = True,
     cutoff_date = datetime.datetime.today().date() if use_today else datetime.date(*fcst_date)
     fcst = fcst[fcst.forecastdate == cutoff_date.replace(year=2018)].copy()
 
+    fcst22 = _get_2022_forecast(chamber)
+
     elex = _get_election_results(chamber)
 
     combined = fcst.merge(elex, on=['state', 'special'], suffixes=('Fcst', 'Actl'))
@@ -138,13 +140,16 @@ def _combine_forecast_and_election_results(chamber: str, use_today: bool = True,
     combined.forecastdate = combined.forecastdate.apply(lambda x: x.strftime('%m/%d/%Y'))
     combined['marginMiss'] = (combined.marginActl - combined.marginFcst).round(2)
     combined['marginMissDir'] = combined.marginMiss.apply(lambda x: "D" if x >= 0 else "R")
-    combined['marginMissText'] = combined.marginMiss.apply(lambda x: f'{"D" if x >= 0 else "R"}+{abs(round(x, 1))}')
+
+    combined = combined.merge(fcst22, on='seat')
+    combined['marginAdj22'] = combined.marginMiss + combined.marginFcst22
 
     return combined[[
         'forecastdate', 'seat',
         'voteshareDFcst', 'voteshareRFcst', 'candidateDFcst', 'candidateRFcst', 'marginFcst',
         'voteshareDActl', 'voteshareRActl', 'candidateDActl', 'candidateRActl', 'marginActl',
-        'marginMiss', 'marginMissDir', 'marginMissText',
+        'marginMiss', 'marginMissDir',
+        'marginFcst22', 'marginAdj22',
     ]]
 
 
