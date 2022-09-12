@@ -9,7 +9,7 @@ def _get_candidate_last_name(x: str) -> str:
         return 'NA'
     x = x.split(' AND ')[0].split('/')[0]
     x = x.lower().strip()
-    names = x.split(None, 1)
+    names = x.rsplit(None, 1)
     try:
         return names[1]
     except IndexError:
