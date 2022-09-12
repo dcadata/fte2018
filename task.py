@@ -141,8 +141,10 @@ def _combine_forecast_and_election_results(chamber: str, use_today: bool = True,
     combined.forecastdate = combined.forecastdate.apply(lambda x: x.strftime('%m/%d/%Y'))
     combined['marginMiss'] = (combined.marginActl - combined.marginFcst).round(2)
 
-    combined = combined.merge(fcst22, on='seat')
-    combined['marginAdj22'] = combined.marginMiss + combined.marginFcst22
+    combined = combined.merge(fcst22, on='seat', how='left')
+
+    cond = combined.marginFcst22.notna()
+    combined.loc[cond, 'marginAdj22'] = combined.loc[cond, 'marginMiss'] + combined.loc[cond, 'marginFcst22']
 
     return combined[[
         'forecastdate', 'seat',
