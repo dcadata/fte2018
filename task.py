@@ -109,6 +109,22 @@ def _get_election_results(*args) -> pd.DataFrame:
     return elex
 
 
+def _get_2022_forecast(chamber: str) -> pd.DataFrame:
+    base_url = 'https://projects.fivethirtyeight.com/2022-general-election-forecast-data/'
+    state_topline_filenames = dict(
+        governor='governor_state_toplines_2022.csv',
+        senate='senate_state_toplines_2022.csv',
+    )
+    data_filepath = base_url + state_topline_filenames[chamber]
+    fcst = pd.read_csv(data_filepath, usecols=['district', 'expression', 'mean_netpartymargin'])
+    # 2022 forecasts default to deluxe
+    fcst = fcst[fcst.expression == '_deluxe'].drop_duplicates(subset=['district'], keep='first')
+    fcst.mean_netpartymargin = fcst.mean_netpartymargin.round(2)
+    fcst['seat'] = fcst.district.apply(lambda x: x[:2] if x.endswith(('-S3', '-G1')) else f'{x[:2]}-Special')
+    fcst = fcst.drop(columns=['district', 'expression']).rename(columns=dict(mean_netpartymargin='marginFcst22'))
+    return fcst
+
+
 def _combine_forecast_and_election_results(chamber: str, use_today: bool = True, fcst_date: tuple = (2018, 11, 6)):
     fcst = _get_2018_forecast(chamber)
     cutoff_date = datetime.datetime.today().date() if use_today else datetime.date(*fcst_date)
