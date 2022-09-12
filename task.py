@@ -123,7 +123,7 @@ def _get_2022_forecast(chamber: str) -> pd.DataFrame:
     # 2022 forecasts default to deluxe
     fcst = fcst[fcst.expression == '_deluxe'].drop_duplicates(subset=['district'], keep='first')
     fcst.mean_netpartymargin = fcst.mean_netpartymargin.round(2)
-    fcst['seat'] = fcst.district.apply(lambda x: x[:2] if x.endswith(('-S3', '-G1')) else f'{x[:2]}-Special')
+    fcst['state'] = fcst.district.apply(lambda x: x[:2] if x.endswith(('-S3', '-G1')) else f'{x[:2]}-Special')
     fcst = fcst.drop(columns=['district', 'expression']).rename(columns=dict(mean_netpartymargin='marginFcst22'))
     return fcst
 
@@ -140,20 +140,21 @@ def _combine_forecast_and_election_results(chamber: str, use_today: bool = True,
     combined = fcst.merge(elex, on=['state', 'special', 'candidateLastNameD', 'candidateLastNameR'], suffixes=(
         'Fcst', 'Actl'))
 
-    combined['seat'] = combined.state + combined.special.apply(lambda x: '-Special' if x else '')
+    combined['state'] = combined.state + combined.special.apply(lambda x: '-Special' if x else '')
     combined.forecastdate = combined.forecastdate.apply(lambda x: x.strftime('%m/%d/%Y'))
     combined['marginMiss'] = (combined.marginActl - combined.marginFcst).round(2)
 
-    combined = combined.merge(fcst22, on='seat', how='left')
+    combined = combined.merge(fcst22, on='state', how='left')
 
-    cond = combined.marginFcst22.notna()
-    combined.loc[cond, 'marginAdj22'] = combined.loc[cond, 'marginMiss'] + combined.loc[cond, 'marginFcst22']
+    condition = combined.marginFcst22.notna()
+    combined.loc[condition, 'marginAdj22'] = (
+            combined.loc[condition, 'marginMiss'] + combined.loc[condition, 'marginFcst22']).round(2)
 
     combined['marginFcst22Abs'] = combined.marginFcst22.apply(abs)
     combined = combined.sort_values('marginFcst22Abs')
 
     return combined[[
-        'forecastdate', 'seat',
+        'forecastdate', 'state',
         'voteshareDFcst', 'voteshareRFcst',
         # 'candidateDFcst', 'candidateRFcst',
         'marginFcst',
