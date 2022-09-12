@@ -154,8 +154,12 @@ def _combine_forecast_and_election_results(chamber: str, use_today: bool = True,
 
     return combined[[
         'forecastdate', 'seat',
-        'voteshareDFcst', 'voteshareRFcst', 'candidateDFcst', 'candidateRFcst', 'marginFcst',
-        'voteshareDActl', 'voteshareRActl', 'candidateDActl', 'candidateRActl', 'marginActl',
+        'voteshareDFcst', 'voteshareRFcst',
+        # 'candidateDFcst', 'candidateRFcst',
+        'marginFcst',
+        'voteshareDActl', 'voteshareRActl',
+        # 'candidateDActl', 'candidateRActl',
+        'marginActl',
         'marginMiss', 'marginFcst22', 'marginAdj22',
     ]]
 
