@@ -149,6 +149,9 @@ def _combine_forecast_and_election_results(chamber: str, use_today: bool = True,
     cond = combined.marginFcst22.notna()
     combined.loc[cond, 'marginAdj22'] = combined.loc[cond, 'marginMiss'] + combined.loc[cond, 'marginFcst22']
 
+    combined['marginFcst22Abs'] = combined.marginFcst22.apply(abs)
+    combined = combined.sort_values('marginFcst22Abs')
+
     return combined[[
         'forecastdate', 'seat',
         'voteshareDFcst', 'voteshareRFcst', 'candidateDFcst', 'candidateRFcst', 'marginFcst',
