@@ -114,11 +114,11 @@ def _get_election_results(*args) -> pd.DataFrame:
 
 def _get_2022_forecast(chamber: str) -> pd.DataFrame:
     base_url = 'https://projects.fivethirtyeight.com/2022-general-election-forecast-data/'
-    state_topline_filenames = dict(
+    data_filename = dict(
         governor='governor_state_toplines_2022.csv',
         senate='senate_state_toplines_2022.csv',
-    )
-    data_filepath = base_url + state_topline_filenames[chamber]
+    )[chamber]
+    data_filepath = base_url + data_filename
     fcst = pd.read_csv(data_filepath, usecols=['district', 'expression', 'mean_netpartymargin'])
     # 2022 forecasts default to deluxe
     fcst = fcst[fcst.expression == '_deluxe'].drop_duplicates(subset=['district'], keep='first')
