@@ -127,8 +127,8 @@ def _get_2022_forecast(chamber: str) -> pd.DataFrame:
     _separate_exp = lambda x: fcst[fcst.expression == x].drop(columns='expression')
     fcst = (
         _separate_exp('_deluxe')
-            .merge(_separate_exp('_classic'), on=['forecastdate', 'district'], suffixes=('', '_classic'))
-            .merge(_separate_exp('_lite'), on=['forecastdate', 'district'], suffixes=('_deluxe', '_lite'))
+            .merge(_separate_exp('_classic'), on=['forecastdate', 'district'], suffixes=('', 'Classic'))
+            .merge(_separate_exp('_lite'), on=['forecastdate', 'district'], suffixes=('Deluxe', 'Lite'))
     ).drop_duplicates(subset=['district'], keep='first')
     fcst['state'] = fcst.district.apply(lambda x: x[:2] if x.endswith(('-S3', '-G1')) else f'{x[:2]}-Special')
     fcst = fcst.drop(columns=['forecastdate', 'district'])
@@ -152,7 +152,7 @@ def _combine_forecast_and_election_results(
 
     combined = combined.merge(fcst22, on='state', how='left')
 
-    combined['marginFcst22Abs'] = combined.marginFcst22_deluxe.apply(abs)
+    combined['marginFcst22Abs'] = combined.marginFcst22Deluxe.apply(abs)
     combined = combined.sort_values('marginFcst22Abs')
 
     return combined[[
@@ -163,7 +163,7 @@ def _combine_forecast_and_election_results(
         'voteshareDActl', 'voteshareRActl',
         # 'candidateDActl', 'candidateRActl',
         'marginActl',
-        'marginMiss', 'marginFcst22_deluxe', 'marginFcst22_classic', 'marginFcst22_lite',
+        'marginMiss', 'marginFcst22Deluxe', 'marginFcst22Classic', 'marginFcst22Lite',
     ]]
 
 

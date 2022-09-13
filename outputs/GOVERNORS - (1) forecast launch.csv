@@ -1,4 +1,4 @@
-forecastdate,state,voteshareDFcst,voteshareRFcst,marginFcst,voteshareDActl,voteshareRActl,marginActl,marginMiss,marginFcst22_deluxe,marginFcst22_classic,marginFcst22_lite
+forecastdate,state,voteshareDFcst,voteshareRFcst,marginFcst,voteshareDActl,voteshareRActl,marginActl,marginMiss,marginFcst22Deluxe,marginFcst22Classic,marginFcst22Lite
 10/11/2018,AZ,42.9,55.01,-12.11,41.85,56.01,-14.16,-2.05,1.11,1.89,2.54
 10/11/2018,NV,48.43,48.64,-0.21,49.39,45.31,4.08,4.29,2.6,3.4,2.35
 10/11/2018,OR,51.92,42.62,9.3,50.08,43.77,6.31,-2.99,3.15,3.11,3.44

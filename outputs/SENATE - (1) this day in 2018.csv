@@ -1,4 +1,4 @@
-forecastdate,state,voteshareDFcst,voteshareRFcst,marginFcst,voteshareDActl,voteshareRActl,marginActl,marginMiss,marginFcst22_deluxe,marginFcst22_classic,marginFcst22_lite
+forecastdate,state,voteshareDFcst,voteshareRFcst,marginFcst,voteshareDActl,voteshareRActl,marginActl,marginMiss,marginFcst22Deluxe,marginFcst22Classic,marginFcst22Lite
 09/13/2018,WI,56.44,43.56,12.88,55.42,44.58,10.84,-2.04,-0.1,2.03,4.44
 09/13/2018,NV,49.23,47.6,1.63,50.41,45.38,5.03,3.4,2.42,3.97,3.71
 09/13/2018,OH,56.2,43.8,12.4,53.41,46.57,6.84,-5.56,-3.53,-0.71,1.55
