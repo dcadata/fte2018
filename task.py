@@ -132,14 +132,11 @@ def _combine_forecast_and_election_results(chamber: str, use_today: bool = True,
     fcst = _get_2018_forecast(chamber)
     cutoff_date = datetime.datetime.today().date() if use_today else datetime.date(*fcst_date)
     fcst = fcst[fcst.forecastdate == cutoff_date.replace(year=2018)].copy()
-
     fcst22 = _get_2022_forecast(chamber)
-
     elex = _get_election_results(chamber)
 
     combined = fcst.merge(elex, on=['state', 'special', 'candidateLastNameD', 'candidateLastNameR'], suffixes=(
         'Fcst', 'Actl'))
-
     combined['state'] = combined.state + combined.special.apply(lambda x: '-Special' if x else '')
     combined.forecastdate = combined.forecastdate.apply(lambda x: x.strftime('%m/%d/%Y'))
     combined['marginMiss'] = (combined.marginActl - combined.marginFcst).round(2)
