@@ -119,12 +119,19 @@ def _get_2022_forecast(chamber: str) -> pd.DataFrame:
         senate='senate_state_toplines_2022.csv',
     )[chamber]
     data_filepath = base_url + data_filename
-    fcst = pd.read_csv(data_filepath, usecols=['district', 'expression', 'mean_netpartymargin'])
+    fcst = pd.read_csv(data_filepath, usecols=['forecastdate', 'district', 'expression', 'mean_netpartymargin']).rename(
+        columns=dict(mean_netpartymargin='marginFcst22'))
+    fcst.marginFcst22 = fcst.marginFcst22.round(2)
+
     # 2022 forecasts default to deluxe
-    fcst = fcst[fcst.expression == '_deluxe'].drop_duplicates(subset=['district'], keep='first')
-    fcst.mean_netpartymargin = fcst.mean_netpartymargin.round(2)
+    _separate_exp = lambda x: fcst[fcst.expression == x].drop(columns='expression')
+    fcst = (
+        _separate_exp('_deluxe')
+            .merge(_separate_exp('_classic'), on=['forecastdate', 'district'], suffixes=('', '_classic'))
+            .merge(_separate_exp('_lite'), on=['forecastdate', 'district'], suffixes=('_deluxe', '_lite'))
+    ).drop_duplicates(subset=['district'], keep='first')
     fcst['state'] = fcst.district.apply(lambda x: x[:2] if x.endswith(('-S3', '-G1')) else f'{x[:2]}-Special')
-    fcst = fcst.drop(columns=['district', 'expression']).rename(columns=dict(mean_netpartymargin='marginFcst22'))
+    fcst = fcst.drop(columns=['forecastdate', 'district'])
     return fcst
 
 
@@ -145,11 +152,7 @@ def _combine_forecast_and_election_results(
 
     combined = combined.merge(fcst22, on='state', how='left')
 
-    condition = combined.marginFcst22.notna()
-    combined.loc[condition, 'marginAdj22'] = (
-            combined.loc[condition, 'marginMiss'] + combined.loc[condition, 'marginFcst22']).round(2)
-
-    combined['marginFcst22Abs'] = combined.marginFcst22.apply(abs)
+    combined['marginFcst22Abs'] = combined.marginFcst22_deluxe.apply(abs)
     combined = combined.sort_values('marginFcst22Abs')
 
     return combined[[
@@ -160,7 +163,7 @@ def _combine_forecast_and_election_results(
         'voteshareDActl', 'voteshareRActl',
         # 'candidateDActl', 'candidateRActl',
         'marginActl',
-        'marginMiss', 'marginFcst22', 'marginAdj22',
+        'marginMiss', 'marginFcst22_deluxe', 'marginFcst22_classic', 'marginFcst22_lite',
     ]]
 
 
