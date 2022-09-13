@@ -128,7 +128,8 @@ def _get_2022_forecast(chamber: str) -> pd.DataFrame:
     return fcst
 
 
-def _combine_forecast_and_election_results(chamber: str, use_today: bool = True, fcst_date: tuple = (2018, 11, 6)):
+def _combine_forecast_and_election_results(
+        chamber: str, use_today: bool = True, fcst_date: tuple = (2018, 11, 6)) -> pd.DataFrame:
     fcst18 = _get_2018_forecast(chamber)
     cutoff_date = datetime.datetime.today().date() if use_today else datetime.date(*fcst_date)
     fcst18 = fcst18[fcst18.forecastdate == cutoff_date.replace(year=2018)].copy()
