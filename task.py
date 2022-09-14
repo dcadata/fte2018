@@ -21,7 +21,7 @@ def _get_candidate_last_name(x: str) -> str:
 def _add_margin(data: pd.DataFrame, merge_cols: list) -> pd.DataFrame:
     _separate_party = lambda p: data[data.party == p].drop(columns='party')
     data = _separate_party('D').merge(_separate_party('R'), on=merge_cols, suffixes=('D', 'R'))
-    data['margin'] = (data.voteshareD - data.voteshareR).round(2)
+    data['margin'] = (data.voteshareD - data.voteshareR).round(1)
     return data
 
 
@@ -91,7 +91,7 @@ def _read_senate_election_results() -> pd.DataFrame:
 def _add_voteshare_to_election_results_and_normalize_columns(elex: pd.DataFrame) -> pd.DataFrame:
     elex.party_simplified = elex.party_simplified.apply(lambda x: x[0])
     elex['candidateLastName'] = elex.candidate.apply(_get_candidate_last_name)
-    elex['voteshare'] = (elex.candidatevotes / elex.totalvotes).apply(lambda x: x * 100).round(2)
+    elex['voteshare'] = (elex.candidatevotes / elex.totalvotes).apply(lambda x: x * 100).round(1)
     elex = elex.drop(columns=['candidatevotes', 'totalvotes']).rename(columns=dict(
         state_po='state', party_simplified='party'))
     return elex
@@ -121,7 +121,7 @@ def _get_2022_forecast(chamber: str) -> pd.DataFrame:
     data_filepath = base_url + data_filename
     fcst = pd.read_csv(data_filepath, usecols=['forecastdate', 'district', 'expression', 'mean_netpartymargin']).rename(
         columns=dict(mean_netpartymargin='marginFcst22'))
-    fcst.marginFcst22 = fcst.marginFcst22.round(2)
+    fcst.marginFcst22 = fcst.marginFcst22.round(1)
 
     # 2022 forecasts default to deluxe
     _separate_exp = lambda x: fcst[fcst.expression == x].drop(columns='expression')
@@ -148,7 +148,7 @@ def _combine_forecast_and_election_results(
 
     combined['state'] = combined.state + combined.special.apply(lambda x: '-Special' if x else '')
     combined.forecastdate = combined.forecastdate.apply(lambda x: x.strftime('%m/%d/%Y'))
-    combined['marginMiss'] = (combined.marginActl - combined.marginFcst).round(2)
+    combined['marginMiss'] = (combined.marginActl - combined.marginFcst).round(1)
 
     combined = combined.merge(fcst22, on='state', how='left')
 
