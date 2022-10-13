@@ -169,7 +169,7 @@ def _combine_forecast_and_election_results(
 
 def main() -> None:
     params = {
-        'GOVERNORS - (1) this day in 2018.csv': dict(chamber='governor'),
+        'GOVERNORS - (1) this day in 2018': dict(chamber='governor'),
         'GOVERNORS - (2) closest to election': dict(chamber='governor', use_today=False),
         'SENATE - (1) this day in 2018': dict(chamber='senate'),
         'SENATE - (2) closest to election': dict(chamber='senate', use_today=False),
