@@ -135,11 +135,9 @@ def _get_2022_forecast(chamber: str) -> pd.DataFrame:
     return fcst
 
 
-def _combine_forecast_and_election_results(
-        chamber: str, use_today: bool = True, fcst_date: tuple = (2018, 11, 6)) -> pd.DataFrame:
+def _combine_forecast_and_election_results(chamber: str) -> pd.DataFrame:
     fcst18 = _get_2018_forecast(chamber)
-    cutoff_date = datetime.datetime.today().date() if use_today else datetime.date(*fcst_date)
-    fcst18 = fcst18[fcst18.forecastdate == cutoff_date.replace(year=2018)].copy()
+    fcst18 = fcst18[fcst18.forecastdate == datetime.datetime.today().date().replace(year=2018)].copy()
     fcst22 = _get_2022_forecast(chamber)
     elex = _get_election_results(chamber)
 
@@ -169,7 +167,7 @@ def _combine_forecast_and_election_results(
 
 def main() -> None:
     params = {
-        'GOVERNORS - (1) this day in 2018': dict(chamber='governor', use_today=False, fcst_date=(2022, 10, 11)),
+        'GOVERNORS - (1) this day in 2018': dict(chamber='governor'),
         'GOVERNORS - (2) closest to election': dict(chamber='governor', use_today=False),
         'SENATE - (1) this day in 2018': dict(chamber='senate'),
         'SENATE - (2) closest to election': dict(chamber='senate', use_today=False),
